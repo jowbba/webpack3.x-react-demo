@@ -5,39 +5,39 @@ import One from './components/one/one'
 import Two from './components/two/two'
 
 class Home extends React.Component {
-	constructor() {
-		super()
-	}
+  constructor() {
+    super()
+  }
 
-	render() {
-		return(
-			<div>
-				<h2>this is home</h2>
-			</div>
-		)
-	}
+  render() {
+    return(
+      <div>
+        <h2>this is home</h2>
+      </div>
+    )
+  }
 }
 
 const App = () => {
-	return (
-		<div>
-			<Link to='/'>to home</Link><br/>
-			<Link to='/one'>to one</Link><br/>
-			<Link to='/two'>to two</Link><br/>
-		
-			<Route exact path='/' component={Home}/>
-			<Route path='/one' component={One}/>
-			<Route path='/two' component={Two}/>
-		</div>
-	)
+  return (
+    <div>
+      <Link to='/'>to home</Link><br/>
+      <Link to='/one'>to one</Link><br/>
+      <Link to='/two'>to two</Link><br/>
+    
+      <Route exact path='/' component={Home}/>
+      <Route path='/one' component={One}/>
+      <Route path='/two' component={Two}/>
+    </div>
+  )
 }
 
 render((
-	<HashRouter>
-		<App/>
+  <HashRouter>
+    <App/>
   </HashRouter>
 ), document.getElementById('root'))
 
 if (module.hot) {
-	module.hot.accept()
+  module.hot.accept()
 }

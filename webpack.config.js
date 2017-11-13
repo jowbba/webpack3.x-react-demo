@@ -4,14 +4,23 @@
 var path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 console.log(path.join(__dirname, 'public'))
  module.exports = {
   // 项目入口文件
-  entry: path.join(__dirname, 'app', 'app.js'),
+  entry: {
+    app: path.join(__dirname, 'app', 'app.js'),
+    // 提取第三方库
+    vendor: ['react', 'react-dom', 'react-router-dom']
+  },
   // 打包文件存储位置
   output: {
-  path: path.join(__dirname, 'public'),
-    filename: 'bundle.js'
+    // 输出不同文件名 处理浏览器缓存问题
+    // 1： 如果是开发环境，将配置文件中的chunkhash 替换为hash
+    // 2：如果是生产环境，不要使用参数 --hot
+    path: path.join(__dirname, 'public'),
+    filename:  '[name].[hash:8].js'
   },
   // 映射 （方便调试）
   devtool: 'eval-source-map',
@@ -49,16 +58,11 @@ console.log(path.join(__dirname, 'public'))
       // let use import or url() to deal with css 
       {
         test: /\.css$/,
-        use: [
-          {
-            loader: 'style-loader'
-          }, {
-            loader: 'css-loader',
-            options: {
-              modules: true
-            }
-          }
-        ]
+        //  提取css, CSS bundle 会跟 JS bundle 并行加载
+        use: ExtractTextPlugin.extract({
+          fallback: "style-loader",
+          use: "css-loader"
+        })
       },
       {
         test: /\.(png|jpg|jpeg|ico|gif|woff|woff2|ttf|eot|svg)$/,
@@ -74,10 +78,24 @@ console.log(path.join(__dirname, 'public'))
   },
   // 使用插件
   plugins: [
+    // 删除缓存插件
+    new CleanWebpackPlugin(['public']),
     new webpack.BannerPlugin('版权所有，翻版必究'),
+    new webpack.HashedModuleIdsPlugin(),
+    // 生成HTML插件
     new HtmlWebpackPlugin({
       template: path.join(__dirname, 'assets', 'index.html')
     }),
-    new webpack.HotModuleReplacementPlugin()
+    // 提取css插件（不再包含在bundle中）
+    new ExtractTextPlugin({
+      filename: "styles.[contenthash:8].css"
+    }),
+    // 热替换插件
+    // 如果是生产环境  注释HotModule outPut才能打印 chunkhash
+    new webpack.HotModuleReplacementPlugin(),
+    // 提取公共模块插件
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor'
+    })
   ],
  }
