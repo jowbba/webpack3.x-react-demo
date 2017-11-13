@@ -1,8 +1,8 @@
 {
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node_modules\\.bin\\webpack",
-    "server": "webpack-dev-server --open"
+    "build": "node_modules\\.bin\\webpack --env=prod",
+    "devel": "webpack-dev-server --open  --env=dev"
   },
   "dependencies": {
     "react": "^16.0.0",
